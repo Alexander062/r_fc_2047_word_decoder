@@ -30,3 +30,10 @@ Invalid encoded-words are returned unchanged rather than raising an exception. T
 Adjacent encoded-words separated by any amount of spaces or tabs are concatenated without the separating whitespace, as required by RFC 2047 section 6.2. This means `=?utf-8?b?SGVsbG8=?=  =?utf-8?b?V29ybGQ=?=` decodes to `HelloWorld`, not `Hello  World`.
 
 Charsets other than UTF-8, ISO-8859-1, and US-ASCII are decoded using Python's standard codec lookup. If the codec is unavailable or the bytes are invalid for that codec, the bytes are preserved using the `surrogateescape` error handler.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
